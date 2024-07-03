@@ -1,55 +1,54 @@
 # Estimação de Dados em Painel
->Esse documento procura demonstrar o processo de estimação de dados em painel, usando como base o livro *Econometric Analysis of Cross Section and Panel Data, Second Edition, de Jeffrey M. Wooldridge*. Todas as bases utilizadas nesse código poder ser encontradas nesse repositório, para quaisquer dúvidas consultar a obra citada acima.
+> A estimação de dados em painel é a analise de dados que possuem uma estrutura de dois fatores, ou seja temos um fator que representa diferentes unidades (como indivíduos, empresas, países, etc.) e outro que representa diferentes períodos de tempo. Esse documento procura demonstrar o processo de estimação de dados em painel, usando como base o livro: "*Econometric Analysis of Cross Section and Panel Data, Second Edition, de Jeffrey M. Wooldridge*". Todas as bases utilizadas nesse código podem ser encontradas nesse repositório, para quaisquer dúvidas consultar a obra referenciada.
 
-## Pooled Cross Section
-#### 1) Primeiro Exemplo 
+### Características Gerais
+- Heterogeneidade das unidades: Cada unidade (indivíduo, empresa, país, etc.) pode ter características próprias que não variam ao longo do tempo.
+- Variabilidade temporal: As variáveis podem mudar ao longo do tempo para cada unidade.
+- Estrutura longitudinal: A presença de múltiplas observações para cada unidade permite analisar tanto a variabilidade dentro das unidades quanto entre elas.
 
-Carregar Base -> FERTIL1.DTA
+> Podemos dizer que Dados em Painel subdivide-se em dois tipos: Painel Verdadeiro e Agrupadamento de Cortes Transversais. Quando temos um Painel Verdadeiro usa-se a mesma unidade de análise ao longo do tempo (todos os "is" são iguais), ou seja, em uma pesquisa por exemplo os dados serão sobre os mesmos inddvíduos ao longo do tempo. Já um Agrupadamento de Cortes Transversais os "is" não serão os mesmos entre os períodos, ou seja, em uma pesquisa os dados não serão dos mesmos indivíduos. 
 
-Nessa base temos uma combinação de cortes transversais
+### Modelos de Dados em Painel
+1) Modelo de Agrupamento Cortes Transversais (Pooled Cross Section)
+2) Modelo de Efeitos Fixos (FE) 
+3) Modelo de Efeitos Aleatórios (RE)
+4) Modelo de Efeitos Dinâmicos (GMM)
+
+### Equação Geral 
+$Yit = \beta0 + + \beta1Xit + \beta2Xit + eit$
+
+- i = unidades específicas
+- t = tempo
+
+## 1) Pooled Cross Section
+### 1º Primeiro Exemplo 
+
+Carregar Base -> FERTIL1.DTA (número de filhos por mulher entre os anos 1974 e 1984)
 
 ```r
-#criando variável, sugestão do autor
-gen age2=age^2 
-#fazendo regressão
-reg kids educ age age2 black east northcen west farm othrural town smcity
+# Criando variável sugerida pelo autor
+gen age2=age^2
 ```
-*Resultados*:
-
-![novo1](https://github.com/HenrySchall/Stata/assets/96027335/d3220d18-ff9e-411b-bb54-ea5f619a4f99)
-
-Nessa regressão temos 1.129 observações, se quissemos saber quantas observações temos
-em cada ano dariamos:
+> Primeiro passo é identificar se temos um Painel Verdadeiro ou um Pooled Cross Section, para isso precisamos descobrir quantas observações temos em cada período.
 
 ```r
 sort year
 by year: tab kids
 #kids é nossa variável dependente, poderiamos pegar qualquer variável
 ```
-![novo2](https://github.com/HenrySchall/Stata/assets/96027335/5672bab5-815c-4333-8893-a009961878b2)
+![3](https://github.com/HenrySchall/Panel_Data/assets/96027335/a2594bbc-866b-4937-b75d-da9adafeeef8)
 
-Pegando os anos de 72 e 74 como exemplo. Podemos ver que no ano de 72, obtivemos 156 entrevistas 
-e no ano de 74 obtivemos 173 entrevistadas, se somarmos os demais anos iremos obter as 1.129 observações.
-Nosso modelo é significativo, porque temos Prob > F = 0.0000 . Todavia, nem todas nossas variáveis são
-significativas ao nível de significância de 10%.
+> Pegando os anos de 72 e 74 como exemplo. Podemos ver que no ano de 72, obtivemos 156 entrevistas 
+e no ano de 74 obtivemos 173 entrevistadas, evidenciando que os dados não são os mesmos para cada período, temos então um Pooled Cross Section.
 
-kids| Coefficient|P>(t)  
-:---:|:---:|:---:
-educ|-.1428788|0.000    
-age|.5624223|0.000     
-age2|-.0060917|0.000    
-black|.977559|0.000    
-east|.2362931|0.078    
-northcen|.3847487|0.002   
-west|.2447027|0.147    
-farm|-.054186|0.715    
-othrural|-.1670751|0.346   
-town|.0842369|0.503    
-smcity|.1830768|0.259   
-_cons|-8.487543|
+```r
+# Fazendo a regressão por MQO Agrupado 
+reg kids educ age age2 black east northcen west farm othrural town smcity y74 y76 y78 y80 y82 y84
+```
+![4](https://github.com/HenrySchall/Panel_Data/assets/96027335/39a5c91b-f6e0-48f3-9982-8920927dc635)
 
-- educ = É significativa e possui efeito *negativo* na variável dependente, ou seja, mulheres mais educadas, controlado
-pelas outras variáveis, tem menos filhos ou o aumento de uma unidade na variável educação, controlado pelos outros fatores, levá a uma diminuição de 14,28% nos níveis de fecundidade. 
+Descrição das variáveis: 
+- educ = É significativa e possui efeito *negativo* na variável dependente, ou seja, mulheres mais educadas, controlado pelas outras variáveis, tem menos filhos ou o aumento de uma unidade na variável educação, controlado pelos outros fatores, levá a uma diminuição de 14,28% nos níveis de fecundidade. 
 - age = É significativa e possui efeito *positivo* na variável dependente
 - age2 = É significativa e possui efeito negativo na variável dependente
 - black = É significativa e possui efeito positivo na variável dependente
@@ -60,14 +59,6 @@ pelas outras variáveis, tem menos filhos ou o aumento de uma unidade na variáv
 - othrural = Não é significativa
 - town = Não é significativa
 - smcity = Não é significativa
-
-Essa base nos permite fazer diversas indagações, sobre o efeito da fecundidade em cada ano, por exemplo será que y76 é maior que y80?. Por isso usaremos dummies estruturais temporais, buscando ver o efeito causal isolado de cada ano.
-
-```r
-reg kids educ age age2 black east northcen west farm othrural town smcity y74 y76 y78 y80 y82 y84
-```
-![Captura de tela 2023-10-26 090141](https://github.com/HenrySchall/Stata/assets/96027335/a46f4f3b-7e82-493c-b85b-75db87e6cd54)
-
 - y74 = Não significativa e possui efeito *positivo*
 - y76 = Não significativa e possui efeito negativo
 - y78 = Não significativa e possui efeito negativo
@@ -75,51 +66,101 @@ reg kids educ age age2 black east northcen west farm othrural town smcity y74 y7
 - y82 = Significativa e possui efeito negativo
 - y84 = Significativa e possui efeito negativo
 
-Como as dummies de y74,y76,y78,80 são não significativas, controlado pelos outros fatores, a fecundidade desses anos é estatisticamente igual a de y72.
+Observe que:
+- Temos 1.129 observações
+- Nosso modelo é significativo, porque temos Prob > F = 0.0000 . Todavia, nem todas nossas variáveis são
+significativas ao nível de significância de 10%.
+- Como as dummies de y74,y76,y78,80 são não significativas, controlado pelos outros fatores, a fecundidade desses anos é estatisticamente igual a de y72.
+- Podemos ver que as dummies y82 e y84 são significativas e negativas, ou seja, controlado pelos outros fatores, existe uma tendência de longo prazo de queda na fecundidade
+
+# Estimador de diferenças em diferenças (DID)
+> Uma alternativa ao Estimador MQO Agrupado é o estimador de diferenças em diferenças (DID), ele é usado quando queremos capturar o efeito antes e depois de um evento, ou seja, de uma mudança especifica nos dados. Sua lógica é semelhante aos testes farmacêuticos, onde seleciona-se uma população amostral, no qual uma parte dessa população recebe um tratamento (grupo de tratamento) de um certo processo natural, enquanto à outra parte dessa população não recebe o tratamento (grupo de controle). Dado pela seguinte equação:
+
+$Yit = \beta0 +\delta0D + \beta1DT + \delta1 D * DT + eit$
+
+Onde:
+
+$\delta0D$ = Dummy pós-evento (0 = período observado anterior o evento & 1 = período observado após o evento)
+
+$\beta1DT$ = Dummy de Tratamento (0 = não recebeu o tratamento & 1 = recebeu o tratamento)
+
+$\delta1 D * DT$ = Dummy de Interação (diferença de receber e não receber o tratamento -> DID)
+
+> Anteriormente o Estimador MQO Agrupado obteve dummies y82 e y84 como significativas e negativas, evidenciando que existe uma tendência de longo prazo de queda na fecundidade, controlado pelos outros fatores. Nesse caso poderiamos usar o  Estimador DID qunatificar esse efeito númericamente. 
+
+```r
+# Fazendo a regressão por DID
+reg kids y 84 educ age age2 black east northcen west farm othrural town smcity y74 y76 y78 y80 y82 y84
+
+```
+
 
 Podemos ver que as dummies y82 e y84 são significativas e negativas, ou seja, controlado pelos outros fatores, existe 
 uma tendência de longo prazo de queda na fecundidade e essa queda é de aproximadamente de 1/2 filho (0.522 - 0.545).
 
-#### 2) Segundo Exemplo
 
-Carregar base -> CPS78_85.DTA
+### 2º Segundo Exemplo
+
+Carregar base -> CPS78_85.DTA (Valor dos salários de 1978 e 1985)
+
 ```r
 sum
 ```
-![1](https://github.com/HenrySchall/Stata/assets/96027335/39ba4008-23ab-4681-94f1-5bc048e2d4dd)
+![5](https://github.com/HenrySchall/Panel_Data/assets/96027335/61fc84b2-87a4-4f35-a41b-02861b481e67)
 
-Para analisarmos as observações em cada ano, damos: 
 ```r
 tab year
 ```
-![2](https://github.com/HenrySchall/Stata/assets/96027335/5ab82a94-afd5-42e9-92c5-97c0db330ab2)
+![6](https://github.com/HenrySchall/Panel_Data/assets/96027335/93821b32-99df-4846-91cb-3a1fd2b66f41)
 
 ```
 reg lwage educ exper expersq union female
 ```
-![3](https://github.com/HenrySchall/Stata/assets/96027335/b0f14b0e-e25d-401a-b82b-3af2b350dc1c)
+![7](https://github.com/HenrySchall/Panel_Data/assets/96027335/7a8054bd-676b-4ddb-b294-4f10a9aa41fa)
 
-Nosso modelo é significativo, porque temos Prob > F = 0.0000 e todas as variáveis são significativas estatisticamente
-(P>|t| = 0.000). Pegando a variável educ como exemplo, podemos dizer que o aumento de 1 ano de educação, controlado pelos outros fatores, leva ao aumento de salário de aproximadamente 8,84%. Essa base de dados nos permite realizar várias perguntas como:
+- Nosso modelo é significativo, porque temos Prob > F = 0.0000 e todas as variáveis são significativas estatisticamente (P>|t| = 0.000).
+- Pegando a variável educ como exemplo, podemos dizer que o aumento de 1 ano de educação, controlado pelos outros fatores, leva ao aumento de salário de aproximadamente 8,84%.
+- Mas com o efeito sobre os salários entre 1978 e 1985, ou seja, qual a diferença entre 
 
-- Salários de 85 são maiores que os de 78?
-- Esse efeito da educação é maior em 78 ou em 85?
+```r
+reg lwage y85 female exper expersq y85fem
+```
 
-Por isso novamente voltaremos à usar dummies para quantificar esse efeito
+```r
+reg lwage y85 educ exper expersq y85educ
+```
+
+y85 -> dummy pós-evento
+female e educ -> dummy de tratamento
+y85educ e y85fem  -> dummy de interação
 
 ```r
 reg lwage y85 educ y85educ exper expersq union female y85fem
 ```
+
+
+
 As dummies multiplicativas serão usadas para testar o efeito de alteração das variáveis durante y78 e y85
-
-![imag](https://github.com/HenrySchall/Stata/assets/96027335/689ef635-79c4-498c-94be-8dcd7e198770)
-
 Podemos notar que a dummy de y85 não é significativa, ou seja, controlado pelos outros fatores os salários de y78 e y85
 são estatisticamente iguais.
 
 - Analisando à variável educ e y85educ. Passamos a decompor à variável, ou seja, controlado pelos outros fatores o aumento de 1 ano de estudo em y78, aumenta os salários em 7,47%, de tal forma, que no ano de y85 esse efeito é 1,85% maior (aumento do efeito de um ano para o outro, ou seja, o prêmio).
 
  - Analisando à variável female e y85fem. Passamos a decompor à variável, ou seja, controlado pelos outros fatores a diferença salarial em y78, é de -31,67%, de tal forma, que no ano de y85 esse efeito é 8,50% menor (31,67% - 8,50% = -23,17%, ou seja, diminuição do efeito de um ano para o outro).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #### 3) Terceiro Exemplo 
 Carregar Base -> KIELMC.DTA
