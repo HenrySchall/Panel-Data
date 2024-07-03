@@ -33,9 +33,12 @@ gen age2=age^2
 
 ```r
 sort year
-by year: tab kids
-#kids é nossa variável dependente, poderiamos pegar qualquer variável
 ```
+```r
+#kids variável dependente
+by year: tab kids
+```
+
 ![3](https://github.com/HenrySchall/Panel_Data/assets/96027335/a2594bbc-866b-4937-b75d-da9adafeeef8)
 
 > Pegando os anos de 72 e 74 como exemplo. Podemos ver que no ano de 72, obtivemos 156 entrevistas 
@@ -70,34 +73,8 @@ Observe que:
 - Temos 1.129 observações
 - Nosso modelo é significativo, porque temos Prob > F = 0.0000 . Todavia, nem todas nossas variáveis são
 significativas ao nível de significância de 10%.
-- Como as dummies de y74,y76,y78,80 são não significativas, controlado pelos outros fatores, a fecundidade desses anos é estatisticamente igual a de y72.
-- Podemos ver que as dummies y82 e y84 são significativas e negativas, ou seja, controlado pelos outros fatores, existe uma tendência de longo prazo de queda na fecundidade
-
-# Estimador de diferenças em diferenças (DID)
-> Uma alternativa ao Estimador MQO Agrupado é o estimador de diferenças em diferenças (DID), ele é usado quando queremos capturar o efeito antes e depois de um evento, ou seja, de uma mudança especifica nos dados. Sua lógica é semelhante aos testes farmacêuticos, onde seleciona-se uma população amostral, no qual uma parte dessa população recebe um tratamento (grupo de tratamento) de um certo processo natural, enquanto à outra parte dessa população não recebe o tratamento (grupo de controle). Dado pela seguinte equação:
-
-$Yit = \beta0 +\delta0D + \beta1DT + \delta1 D * DT + eit$
-
-Onde:
-
-$\delta0D$ = Dummy pós-evento (0 = período observado anterior o evento & 1 = período observado após o evento)
-
-$\beta1DT$ = Dummy de Tratamento (0 = não recebeu o tratamento & 1 = recebeu o tratamento)
-
-$\delta1 D * DT$ = Dummy de Interação (diferença de receber e não receber o tratamento -> DID)
-
-> Anteriormente o Estimador MQO Agrupado obteve dummies y82 e y84 como significativas e negativas, evidenciando que existe uma tendência de longo prazo de queda na fecundidade, controlado pelos outros fatores. Nesse caso poderiamos usar o  Estimador DID qunatificar esse efeito númericamente. 
-
-```r
-# Fazendo a regressão por DID
-reg kids y 84 educ age age2 black east northcen west farm othrural town smcity y74 y76 y78 y80 y82 y84
-
-```
-
-
-Podemos ver que as dummies y82 e y84 são significativas e negativas, ou seja, controlado pelos outros fatores, existe 
-uma tendência de longo prazo de queda na fecundidade e essa queda é de aproximadamente de 1/2 filho (0.522 - 0.545).
-
+- Como as dummies de y74,y76,y78,80 são não significativas, ou seja, controlado pelos outros fatores, a fecundidade desses anos é estatisticamente igual a de y72.
+- Podemos ver que as dummies y82 e y84 são significativas e negativas, ou seja, controlado pelos outros fatores, existe uma tendência de longo prazo na queda de fecundidade e essa queda é de aproximadamente de (0.522 - 0.545 = -0,023 filhos).
 
 ### 2º Segundo Exemplo
 
@@ -120,38 +97,58 @@ reg lwage educ exper expersq union female
 
 - Nosso modelo é significativo, porque temos Prob > F = 0.0000 e todas as variáveis são significativas estatisticamente (P>|t| = 0.000).
 - Pegando a variável educ como exemplo, podemos dizer que o aumento de 1 ano de educação, controlado pelos outros fatores, leva ao aumento de salário de aproximadamente 8,84%.
-- Mas com o efeito sobre os salários entre 1978 e 1985, ou seja, qual a diferença entre 
+- Pegando a variável female como exemplo, podemos dizer que o fato de ser mulher, controlado pelos outros fatores, leva a uma diminuição de salário de aproximadamente 25,08%.
+
+> Entretanto qual o efeito real sobre os salários entre 1978 e 1985, levando em conta os fatores educação e ser mulher. Ouve aumento ou diminuição no salário de 1978 em relação a 1985? No exemplo anterior realizamos a diferença entre as dummies y82 e y84, para encontrar esse efeito real, todavia uma alternativa seria utilizar-se do Estimador de Diferenças em Diferenças (DID).
+
+# Estimador de diferenças em diferenças (DID)
+> Ele é uma alternativa ao Estimador MQO Agrupado, utiliza-se ele quando queremos capturar o efeito antes e depois de um evento, ou seja, de uma mudança especifica nos dados. Sua lógica é semelhante aos testes farmacêuticos, onde seleciona-se uma população amostral, no qual uma parte dessa população recebe um tratamento (grupo de tratamento) de um certo processo natural, enquanto à outra parte dessa população não recebe o tratamento (grupo de controle). Dado pela seguinte equação:
+
+$Yit = \beta0 +\delta0D + \beta1DT + \delta1 D * DT + eit$
+
+Onde:
+
+$\delta0D$ = Dummy pós-evento 
+- 0 = período observado anterior ao evento 
+- 1 = período observado após o evento
+
+$\beta1DT$ = Dummy de Tratamento
+- 0 = não recebeu o tratamento
+- 1 = recebeu o tratamento
+
+$\delta1 D * DT$ = Dummy de Interação (diferença de receber e não receber o tratamento = DID)
+
+> Sendo assim no exemplo em questão teremos que:
+
+- y85 -> dummy pós-evento
+- female e educ -> dummy de tratamento
+- y85educ e y85fem -> dummy de interação
 
 ```r
 reg lwage y85 female exper expersq y85fem
 ```
+![01](https://github.com/HenrySchall/Panel_Data/assets/96027335/830acadc-3543-4a99-ba51-52e274ce0b31)
 
 ```r
 reg lwage y85 educ exper expersq y85educ
 ```
-
-y85 -> dummy pós-evento
-female e educ -> dummy de tratamento
-y85educ e y85fem  -> dummy de interação
+![02](https://github.com/HenrySchall/Panel_Data/assets/96027335/4a37671d-9641-4cc6-9f39-047c42ab6b22)
 
 ```r
+# Podemos analisar os dois efeitos em conjunto, diminuindo possível multicolinealidade e aumentando os graus de liberade do modelo
 reg lwage y85 educ y85educ exper expersq union female y85fem
 ```
+![03](https://github.com/HenrySchall/Panel_Data/assets/96027335/1c141c26-d495-4e66-9375-25820dc458fe)
 
+- A dummy de y85 não é significativa, ou seja, controlado pelos outros fatores os salários de y78 e y85 são estatisticamente iguais.
 
+- Analisando à variável educ e y85educ. Temos que o aumento de 1 ano de estudo em y78, aumenta os salários em 7,47%, controlado pelos outros fatores. Além disso, no ano de y85 esse efeito é 1,85% maior (7,47% - 8,50% = 1,85%, ou seja, aumento do efeito de um ano para o outro)
 
-As dummies multiplicativas serão usadas para testar o efeito de alteração das variáveis durante y78 e y85
-Podemos notar que a dummy de y85 não é significativa, ou seja, controlado pelos outros fatores os salários de y78 e y85
-são estatisticamente iguais.
+- Analisando à variável female e y85fem. Temos que diferença salarial em y78, é de -31,67%, controlado pelos outros fatores. Além disso, no ano de y85 esse efeito é 8,50% menor (31,67% - 8,50% = -23,17%, ou seja, diminuição do efeito de um ano para o outro).
 
-- Analisando à variável educ e y85educ. Passamos a decompor à variável, ou seja, controlado pelos outros fatores o aumento de 1 ano de estudo em y78, aumenta os salários em 7,47%, de tal forma, que no ano de y85 esse efeito é 1,85% maior (aumento do efeito de um ano para o outro, ou seja, o prêmio).
+### 3º Terceiro Exemplo 
 
- - Analisando à variável female e y85fem. Passamos a decompor à variável, ou seja, controlado pelos outros fatores a diferença salarial em y78, é de -31,67%, de tal forma, que no ano de y85 esse efeito é 8,50% menor (31,67% - 8,50% = -23,17%, ou seja, diminuição do efeito de um ano para o outro).
-
-
-
-
-
+Carregar Base -> KIELMC.DTA (Efeito da instalação de um incinerador de lixo no preço dos imóveis em uma região de Massachusetts)
 
 
 
@@ -162,10 +159,17 @@ são estatisticamente iguais.
 
 
 
-#### 3) Terceiro Exemplo 
-Carregar Base -> KIELMC.DTA
 
-Nessa Base iremos ver como a instalação de um incinerador de lixo, afetou o preço dos imóveis em uma região de Massachusetts
+
+
+
+
+
+
+
+
+
+
 
 ```r
 tab year
