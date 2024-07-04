@@ -269,35 +269,32 @@ Descrição das variáveis:
 - grant_1 = subsídio para treinamento dummy para 88
 - fcode = é o código da empresa
 
+```r
+# MQO Agrupado
+reg lscrap d88 d89 grant grant_1
+```
+![1](https://github.com/HenrySchall/Panel-Data/assets/96027335/38738c66-939f-4c2c-8270-12f809667b92)
 
+```r
+# Demonstrando como calcular a primeira diferença de uma variável 
+tsset fcode year
+```
 
+```r
+generate clscrap2 = D.lscrap
+# observe que clscrap2 retornou os mesmos valores de clscrap
+```
 
+```r
+# Primeiras Diferenças
+reg clscrap cgrant 
+```
+![2](https://github.com/HenrySchall/Panel-Data/assets/96027335/3c9bf8bb-488d-4e3d-baf7-de8f3eaa756e)
+
+> Ao rodar um modelo via MQO Agrupado e Estimador de Primeiras Diferenças, em ambos os casos as dummies grant, 
+grant_1 e cgrant (grant - grant_1) são não significativas. Conclui-se que existe alguma coisa omitida no termo de erro que leva a uma estimação via MQO e Primeiras Diferenças viesada. Por exemplo, poderiamos dizer que existe diferenças entre as empresas na forma que os descartes são feitos, sendo assim considera-se a presença de um efeito fixo (FE), sendo necessário usar o Estimado de Efeito Fixo (FE);
 
 ### Estimador de Efeitos Fixo
-
-```R
-# estimando sem o efeito fixo
-reg lscrap d88 d89 grant grant_1
-```
-
-
-
-
-
-
-
-- lscrap = taxa de descarte
-- grant = subsídio para treinamento dummy para 89
-- grant_1 = subsídio para treinamento dummy para 88
-- fcode = é o código da empresa
-
-```R
-# estimando sem o efeito fixo
-reg lscrap d88 d89 grant grant_1
-```
-![2323fdefef](https://github.com/HenrySchall/Stata/assets/96027335/7de73d72-f916-495f-9ca0-be913a8e0f5e)
-
-grant e grant_1 são positivos, mas não significativos. Então existe alguma coisa omitida no erro, o que leva a estimação via MQO ser viesada. Por exemplo, poderiamos dizer que existe diferenças entre as empresas na forma que os descartes são feitos, ou seja, poderiamos considerar esse fator como um efeito fixo (FE).
 
 ```R
 # identificando para o stata a presença de um painel, monstrando qual variável será o "i" e quando varipavel será o "t"
@@ -309,7 +306,16 @@ tis year # variável t
 # Estimando com o efeito fixo
 xtreg lscrap d88 d89 grant grant_1, fe
 ```
-![1212343](https://github.com/HenrySchall/Stata/assets/96027335/9b67a60e-00a6-4fbd-92f7-c0259b61a83c)
+
+![3](https://github.com/HenrySchall/Panel-Data/assets/96027335/7bc851ba-ec29-471e-a8e3-0fa3050ab947)
+
+
+
+
+
+
+
+
 
 - Nosso modelo é significativo do ponto de vista global (Prob > F = 0.0001)
 - Controlado por outos fatores as taxas de descarte de 88 não são diferentes de em 89 estatiscamente falando
