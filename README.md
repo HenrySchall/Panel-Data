@@ -38,7 +38,6 @@ sort year
 #kids variável dependente
 by year: tab kids
 ```
-
 ![3](https://github.com/HenrySchall/Panel_Data/assets/96027335/a2594bbc-866b-4937-b75d-da9adafeeef8)
 
 > Pegando os anos de 72 e 74 como exemplo. Podemos ver que no ano de 72, obtivemos 156 entrevistas 
@@ -205,14 +204,37 @@ reg ldurat afchnge highearn afhigh male married indust injtype
 ![02](https://github.com/HenrySchall/Panel-Data/assets/96027335/6bd6cd21-9abb-4b20-a372-d7e11254c69a)
 
 ## Painel Verdadeiro 
+> Até então todos os datasets eram agrupamentos de cortes transversais, se uma das das variáveis controles tiver alguma relação com as variáveis explicativas de um modelo, haverá a presença de endogeneidade, porque a COV (Xn,e) ≠ 0. Então estimação via MQO Agrupado será viesada. Quando utiliza-se um painel verdadeiro, todos os "is" serão iguais para todos os períodos, sendo assim podemos utilizar outra equação geral, consideando um termo de erro composto. 
 
+#### Equação Geral 
+$Yit = \beta0 + + \beta1Xit + \beta2Xit + Vit$
 
+$Vit = ai + uit$
+
+- Vit = termo de erro composto
+- ai = efeito fixo ou heteogeneidade não observada (aquilo que não varia no tempo)
+- uit = erro endossincrático (aquilo que varia no tempo)
+
+> Efeito fixo é algo que explica Yit, sendo específico de i, todavia não varia no horizonte de tempo observado. Então para evitar endogeneidade, utiliza-se de um específico, ao invés de MQO Agrupado, o Estimador de Primeiras Diferenças, que matemáticamente falando consiste em subtrair os cortes transversais das todas as observações i durante o tempo.
 
 ### Estimador de Primeiras Diferenças
-#### Exemplo 
-Carregar Base -> CRIME2.DTA
+$Yi1 = (\beta0 + \delta0) + \beta1Xi1 + Vit$ (ai + uit)$
 
-Resumo base: Taxas de criminalidade para os mesmos munícipios americanos em 87 e 82. 
+$Yi2 = (\beta0 + \delta0) + \beta1Xi1 + Vit$ (ai + uit)$
+
+$(Yi2 - Yi1) = \delta0 + \beta1(xi2 - xi1) + (ui2 - ui1)$
+
+$∆Yi = \delta0 + \beta1∆Xi + ∆ui$
+
+#### 1º Primeiro Exemplo 
+Carregar Base -> CRIME2.DTA (Taxas de criminalidade para os munícipios americanos em 82 e 87). 
+
+```r
+tab year
+```
+![Captura de tela 2024-07-03 233018](https://github.com/HenrySchall/Panel-Data/assets/96027335/c7b2aaac-fa78-45b5-a800-019fec40e083)
+
+- observa-se que temos os mesmos números de observações para os anos 82 e 87, então temos um painel verdadeiro
 - crmrte = taxa de crime
 - unem = desemprego
 
@@ -220,11 +242,11 @@ Resumo base: Taxas de criminalidade para os mesmos munícipios americanos em 87 
 # Mesma equação descrita na parte teórica
 reg crmrte d87 unem
 ```
-![001](https://github.com/HenrySchall/Stata/assets/96027335/adb966a2-9498-4ec7-97d4-9f4bf2c904a4)
+![2](https://github.com/HenrySchall/Panel-Data/assets/96027335/dac9953a-e4c2-4d80-9e92-4e2a41d81c7a)
 
 unem foi dada como não significativa (resultado contrário ao da literatura), então: 
 - há variáveis omitidas no erro
-- elas são coorrelacionadas com unem
+- elas são correlacionadas com unem
 
 Então não posso estimar por MQO (viesado), vou usar estimador de primeiras diferenças.
 
@@ -232,13 +254,21 @@ Então não posso estimar por MQO (viesado), vou usar estimador de primeiras dif
 # ccrmrte e cunem = são as primeiras diferenças das variáveis
 reg ccrmrte cunem
 ```
-![00202](https://github.com/HenrySchall/Stata/assets/96027335/4ad5cd49-2833-46e5-9809-bd9d3f2181fb)
+![3](https://github.com/HenrySchall/Panel-Data/assets/96027335/418e4c95-d013-46b5-8c32-6a21295c567c)
+
+
+
+
+
 
 **Atenção** -> Mudança na interpretação das variáveis
 
 - Vemos claramente que nosso modelo passou a ser significativo, assim como a variável unem.
 - Interpretação _cons (intercepto) -> Condicionado pelas outras variavies explicativas iguais a 0, a variação da variável dependente é igual a 15.4 pontos perceutais, ou seja, mesmo com o desemprego não variando, ocorre um aumento nas ocorrências de crimininalidade de 82 para 87 em 15.4 ocorrências para cada grupo de 1000 habitantes.
 - Interpretação unem -> Quando o desemprego varia em um ponto percentual, a ocorrência de criminalidade aumenta (varia positivamente) em 2.2 ocorrências para cada grupo de 1000 habitantes.
+
+
+
 
 ### Estimador de Efeitos Fixos
 #### Exemplo 
