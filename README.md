@@ -118,7 +118,7 @@ $\beta1DT$ = Dummy de Tratamento
 
 $\delta1 D * DT$ = Dummy de Interação (diferença de receber e não receber o tratamento = DID)
 
-> Sendo assim no exemplo em questão teremos que:
+Sendo assim no exemplo em questão teremos que:
 
 - y85 -> dummy pós-evento
 - female e educ -> dummy de tratamento
@@ -142,108 +142,72 @@ reg lwage y85 educ y85educ exper expersq union female y85fem
 
 - A dummy de y85 não é significativa, ou seja, controlado pelos outros fatores os salários de y78 e y85 são estatisticamente iguais.
 
-- Analisando à variável educ e y85educ. Temos que o aumento de 1 ano de estudo em y78, aumenta os salários em 7,47%, controlado pelos outros fatores. Além disso, no ano de y85 esse efeito é 1,85% maior (7,47% - 8,50% = 1,85%, ou seja, aumento do efeito de um ano para o outro)
+- Analisando à variável educ e y85educ. Temos que o aumento de 1 ano de estudo em y78, aumenta os salários em 7,47%, controlado pelos outros fatores. Além disso, no ano de y85 esse efeito é 1,85% maior (7,47% - 8,50% = 1,85%), ou seja, aumento do efeito de um ano para o outro)
 
-- Analisando à variável female e y85fem. Temos que diferença salarial em y78, é de -31,67%, controlado pelos outros fatores. Além disso, no ano de y85 esse efeito é 8,50% menor (31,67% - 8,50% = -23,17%, ou seja, diminuição do efeito de um ano para o outro).
+- Analisando à variável female e y85fem. Temos que diferença salarial em y78, é de -31,67%, controlado pelos outros fatores. Além disso, no ano de y85 esse efeito é 8,50% menor (31,67% - 8,50% = -23,17%), ou seja, diminuição do efeito de um ano para o outro).
 
 ### 3º Terceiro Exemplo 
 
 Carregar Base -> KIELMC.DTA (Efeito da instalação de um incinerador de lixo no preço dos imóveis em uma região de Massachusetts)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```r
 tab year
 ```
-![imag1](https://github.com/HenrySchall/Stata/assets/96027335/d87c5f90-9086-4f4d-b5b1-054c694dedda)
+![1](https://github.com/HenrySchall/Panel-Data/assets/96027335/565abfdf-50d8-4dac-987b-ee32c129b375)
+
+> Observa-se que não tenho um painel de dados verdadeiro
 
 ```r
 sum
 ```
-![Imag2](https://github.com/HenrySchall/Stata/assets/96027335/d7b26c71-825c-414c-b976-bfa2ae16608c)
+![2](https://github.com/HenrySchall/Panel-Data/assets/96027335/9f5fdf1a-8e46-4bb9-a8e1-7d8e842ce0d2)
 
 ```r
-#pegando o preço dos imóveis e regredindo com a dummy de localização em 81
+#nearinc = dummy de localização
 reg rprice nearinc if year==1981
 ```
-![imag3](https://github.com/HenrySchall/Stata/assets/96027335/71990ee0-1ecd-4ff4-9e1b-4f4f634ac1d7)
+![3](https://github.com/HenrySchall/Panel-Data/assets/96027335/f849407f-049c-43fe-a715-552934949a35)
 
-Nosso modelo será significativo do ponto de vista global e a nossa variável nearinc é significativa e negativa, ou seja, em
-81, os imóveis que estão localizados próximos a construção do centro de tratamento de lixo possuem preços menores, em média 30.688 doláres, que os imóveis afastados da construção do centro de tratamento de lixo.
-
-- Pergunta: *Essa diferença de preço é causada pela construção do centro de tratamento de lixo?*
+> Nosso modelo será significativo do ponto de vista global e a nossa variável nearinc é significativa e negativa, ou seja, em 81, os imóveis que estão localizados próximos do centro de tratamento de lixo possuem preços menores, em média US$30.688, que os imóveis afastados do centro de tratamento de lixo. Todavia será que essa diferença é causada pelo centro de tratamento de lixo?
 
 ```r
-#pegando o preço dos imóveis e regredindo com a dummy de localização em 78
 reg rprice nearinc if year==1978
 ```
+![4](https://github.com/HenrySchall/Panel-Data/assets/96027335/98e48306-ea46-4b58-9ac7-10200695c592)
 
-![imagg](https://github.com/HenrySchall/Stata/assets/96027335/9ad2b6c6-aa1a-4621-81c7-abc58a9f17a4)
-
-Nossa resposta será __*Não*__. Porque vemos o mesmo efeito em 78, muito antes da construção do centro de 
-tratamento de lixo. Sendo assim os preço são mais baixos, porque muito possívelmente estamos analisando
-uma região menos privilegiada da cidade. Então o efeito real da construção do centro de tratamento de lixo, será a diferença entre os anos y81 e y78, ou seja, 18.824 - 30.688 = 11.864 doláres -> estimador diferenças e indiferenças.
-
-- Todavia esse processo não é nem um pouco prático, então como podemos realizar essa estimação diretamente?
-
-![IMAGES](https://github.com/HenrySchall/Stata/assets/96027335/90d8cbfb-69b6-4513-825f-ae3ad6d0bd66)
-
-```r
-reg rprice y81 nearinc y81nri
-# note que: y81 = dummy de 81 / nearinc = dummy de localização / y81nri = multiplicação das dummies 
-```
-![IMAGES](https://github.com/HenrySchall/Stata/assets/96027335/216e6461-362c-4512-83ec-13722622fc6b)
-
-Observa-se que a variável foi dada como não significativa, nesse caso o autor recomenda acrescentar mais variáveis ao modelo (como no exemplo abaixo). Como é apenas um exemplo para demostrar o funcionamento do estimador desconsideramos esse resultado. 
+- Observa-se que a resposta é  __*Não*__. Porque vemos o mesmo efeito em 78, muito antes da instalação do centro de tratamento de lixo. Sendo assim os preço são mais baixos porque muito possívelmente estamos analisando uma região menos privilegiada da cidade.
+- Então o efeito real da instalação do centro de tratamento de lixo, será a diferença entre as dummies y81 e y78 (18.824 - 30.688 = US$11.864), que seria o mesmo que estimar usando estimador DID
 
 ```R
+# usando estimador DID
 reg rprice y81 nearinc y81nrinc age agesq intst land area rooms baths
 ```
-![ddd](https://github.com/HenrySchall/Stata/assets/96027335/ce010449-0a4e-4d44-9622-e1e8c07a439a)
+![6](https://github.com/HenrySchall/Panel-Data/assets/96027335/aa708ee2-8dcf-422f-a54c-d92f5fcb3f30)
 
-- O que aconteceria de usássemos log price (lprice)? Teriamos resultados muito diferentes? (Experimente tentar)
-
-#### 4) Quarto Exemplo
-Carregar Base -> INJURY.DTA
-
-Resumo base: Em julho de 80 havia um limite para recebimento de auxilio compensação por acidente de trabalho, em relação a renda dos indivíduos, sendo que indivíudos com renda superior ao limite, não recebiam compensação. Após julho de 80, esse limite foi elevado. Qual será o impacto da mudança?
+### 4º Quarto Exemplo
+Carregar Base -> INJURY.DTA (Em julho de 1980 havia um limite para recebimento de auxilio compensação por acidente de trabalho em relação a renda dos indivíduos, sendo que indivíudos com renda superior ao limite não recebiam compensação. Após julho de 82, esse limite foi elevado)
 
 ```R
 reg ldurat afchnge highearn afhigh
-# afchnge = dummy pós período (1 = indivíduos afastados pós novo legislação e 0 = caso contrário)
-# highearn = dummy de tratamento (1 = Individuos com renda acima do limite da legislação antiga e 0 = caso contrário)
-# afhigh = dummy de interação
 ```
-![imagess](https://github.com/HenrySchall/Stata/assets/96027335/5272cd4f-d043-4609-9255-99db6c4bb4fd)
+- afchnge = dummy pós período (1 = indivíduos afastados pós novo legislação e 0 = caso contrário)
+- highearn = dummy de tratamento (1 = Individuos com renda acima do limite da legislação antiga e 0 = caso contrário)
+- afhigh = dummy de interação
 
-- afchnge = é não significativa e positiva, ou seja, controlado pelos outros fatores, pós nova legislação não há mudança na duração do afastamento para os indivíduos de renda baixa, porque os afetados são apenas os indivíduos de renda alta. 
-- afhigh = é significativa e positiva, ou seja, controlado pelos outros fatores, após a mudança da legislação, os indivíduos que tinham renda mais alta (não eram contemplados pela compensação), passaram à se afastar um período muito maior, cerca de 18% no tempo de duração de afastamento.
+![01](https://github.com/HenrySchall/Panel-Data/assets/96027335/a39ed94c-61fc-4687-9b7f-e2f56cacaf6b)
+
+- afchnge = é não significativa e positiva, controlado pelos outros fatores, pós nova legislação não há mudança na duração do afastamento para os indivíduos de renda baixa, porque os afetados são apenas os indivíduos de renda alta. 
+- afhigh = é significativa e positiva, controlado pelos outros fatores, após a mudança da legislação, os indivíduos que tinham renda mais alta (não eram contemplados pela compensação) passaram à se afastar um período muito maior, cerca de 18% no tempo de duração de afastamento.
 
 ```R
 reg ldurat afchnge highearn afhigh male married indust injtype
 ```
-![ddddffe](https://github.com/HenrySchall/Stata/assets/96027335/f85820d6-3649-41e6-848c-bebe1f1033c8)
+![02](https://github.com/HenrySchall/Panel-Data/assets/96027335/6bd6cd21-9abb-4b20-a372-d7e11254c69a)
 
 ## Painel Verdadeiro 
+
+
+
 ### Estimador de Primeiras Diferenças
 #### Exemplo 
 Carregar Base -> CRIME2.DTA
