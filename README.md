@@ -117,8 +117,7 @@ $\beta1DT$ = Dummy de Tratamento
 
 $\delta1 D * DT$ = Dummy de Interação (diferença de receber e não receber o tratamento = DID)
 
-Sendo assim no exemplo em questão teremos que:
-
+Descrição das variáveis: 
 - y85 -> dummy pós-evento
 - female e educ -> dummy de tratamento
 - y85educ e y85fem -> dummy de interação
@@ -189,6 +188,7 @@ Carregar Base -> INJURY.DTA (Em julho de 1980 havia um limite para recebimento d
 ```R
 reg ldurat afchnge highearn afhigh
 ```
+Descrição das variáveis: 
 - afchnge = dummy pós período (1 = indivíduos afastados pós novo legislação e 0 = caso contrário)
 - highearn = dummy de tratamento (1 = Individuos com renda acima do limite da legislação antiga e 0 = caso contrário)
 - afhigh = dummy de interação
@@ -234,9 +234,9 @@ tab year
 ```
 ![Captura de tela 2024-07-03 233018](https://github.com/HenrySchall/Panel-Data/assets/96027335/c7b2aaac-fa78-45b5-a800-019fec40e083)
 
-- observa-se que temos os mesmos números de observações para os anos 82 e 87, então temos um painel verdadeiro
 - crmrte = taxa de crime
 - unem = desemprego
+- observa-se que temos os mesmos números de observações para os anos 82 e 87, então temos um painel verdadeiro
 
 ```R
 # Mesma equação descrita na parte teórica
@@ -256,25 +256,35 @@ reg ccrmrte cunem
 ```
 ![3](https://github.com/HenrySchall/Panel-Data/assets/96027335/418e4c95-d013-46b5-8c32-6a21295c567c)
 
-
-
-
-
-
-**Atenção** -> Mudança na interpretação das variáveis
-
 - Vemos claramente que nosso modelo passou a ser significativo, assim como a variável unem.
 - Interpretação _cons (intercepto) -> Condicionado pelas outras variavies explicativas iguais a 0, a variação da variável dependente é igual a 15.4 pontos perceutais, ou seja, mesmo com o desemprego não variando, ocorre um aumento nas ocorrências de crimininalidade de 82 para 87 em 15.4 ocorrências para cada grupo de 1000 habitantes.
 - Interpretação unem -> Quando o desemprego varia em um ponto percentual, a ocorrência de criminalidade aumenta (varia positivamente) em 2.2 ocorrências para cada grupo de 1000 habitantes.
 
+#### 2º Segundo Exemplo 
+Carregar Base -> Jtrain.DTA (Acompanhamento de 54 empresas durante três anos, mostrando a taxa de descarte dos seus produtos, num cenário onde há subsídio governamental para treinamento de funcionários). 
+
+Descrição das variáveis: 
+- lscrap = taxa de descarte
+- grant = subsídio para treinamento dummy para 89
+- grant_1 = subsídio para treinamento dummy para 88
+- fcode = é o código da empresa
 
 
 
-### Estimador de Efeitos Fixos
-#### Exemplo 
-Carregar Base -> Jtrain.DTA
 
-Resumo Base: Acompanhamento de 54 empresas, as mesmas durantes os três anos, mostrando a taxa de descarte dos seus produtos, num cenário onde há subsídio governamental para treinamento de funcionários.
+
+### Estimador de Efeitos Fixo
+
+```R
+# estimando sem o efeito fixo
+reg lscrap d88 d89 grant grant_1
+```
+
+
+
+
+
+
 
 - lscrap = taxa de descarte
 - grant = subsídio para treinamento dummy para 89
