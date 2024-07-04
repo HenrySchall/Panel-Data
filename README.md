@@ -20,8 +20,9 @@ $Yit = \beta0 + + \beta1Xit + \beta2Xit + eit$
 - i = unidades específicas
 - t = tempo
 
-## 1) Pooled Cross Section
-### 1º Primeiro Exemplo 
+## Pooled Cross Section (Agrupadamento de Cortes Transversais)
+
+#### 1º Primeiro Exemplo 
 
 Carregar Base -> FERTIL1.DTA (número de filhos por mulher entre os anos 1974 e 1984)
 
@@ -75,7 +76,7 @@ significativas ao nível de significância de 10%.
 - Como as dummies de y74,y76,y78,80 são não significativas, ou seja, controlado pelos outros fatores, a fecundidade desses anos é estatisticamente igual a de y72.
 - Podemos ver que as dummies y82 e y84 são significativas e negativas, ou seja, controlado pelos outros fatores, existe uma tendência de longo prazo na queda de fecundidade e essa queda é de aproximadamente de (0.522 - 0.545 = -0,023 filhos).
 
-### 2º Segundo Exemplo
+#### 2º Segundo Exemplo
 
 Carregar base -> CPS78_85.DTA (Valor dos salários de 1978 e 1985)
 
@@ -100,7 +101,7 @@ reg lwage educ exper expersq union female
 
 > Entretanto qual o efeito real sobre os salários entre 1978 e 1985, levando em conta os fatores educação e ser mulher. Ouve aumento ou diminuição no salário de 1978 em relação a 1985? No exemplo anterior realizamos a diferença entre as dummies y82 e y84, para encontrar esse efeito real, todavia uma alternativa seria utilizar-se do Estimador de Diferenças em Diferenças (DID).
 
-# Estimador de diferenças em diferenças (DID)
+### Estimador de diferença em diferenças (DID)
 > Ele é uma alternativa ao Estimador MQO Agrupado, utiliza-se ele quando queremos capturar o efeito antes e depois de um evento, ou seja, de uma mudança especifica nos dados. Sua lógica é semelhante aos testes farmacêuticos, onde seleciona-se uma população amostral, no qual uma parte dessa população recebe um tratamento (grupo de tratamento) de um certo processo natural, enquanto à outra parte dessa população não recebe o tratamento (grupo de controle). Dado pela seguinte equação:
 
 $Yit = \beta0 +\delta0D + \beta1DT + \delta1 D * DT + eit$
@@ -144,7 +145,7 @@ reg lwage y85 educ y85educ exper expersq union female y85fem
 
 - Analisando à variável female e y85fem. Temos que diferença salarial em y78, é de -31,67%, controlado pelos outros fatores. Além disso, no ano de y85 esse efeito é 8,50% menor (31,67% - 8,50% = -23,17%), ou seja, diminuição do efeito de um ano para o outro).
 
-### 3º Terceiro Exemplo 
+#### 3º Terceiro Exemplo 
 
 Carregar Base -> KIELMC.DTA (Efeito da instalação de um incinerador de lixo no preço dos imóveis em uma região de Massachusetts)
 
@@ -182,7 +183,7 @@ reg rprice y81 nearinc y81nrinc age agesq intst land area rooms baths
 ```
 ![6](https://github.com/HenrySchall/Panel-Data/assets/96027335/aa708ee2-8dcf-422f-a54c-d92f5fcb3f30)
 
-### 4º Quarto Exemplo
+#### 4º Quarto Exemplo
 Carregar Base -> INJURY.DTA (Em julho de 1980 havia um limite para recebimento de auxilio compensação por acidente de trabalho em relação a renda dos indivíduos, sendo que indivíudos com renda superior ao limite não recebiam compensação. Após julho de 82, esse limite foi elevado)
 
 ```R
@@ -222,7 +223,7 @@ $Yi1 = (\beta0 + \delta0) + \beta1Xi1 + Vit$ (ai + uit)$
 
 $Yi2 = (\beta0 + \delta0) + \beta1Xi1 + Vit$ (ai + uit)$
 
-$(Yi2 - Yi1) = \delta0 + \beta1(xi2 - xi1) + (ui2 - ui1)$
+$(Yi2 - Yi1) = \delta0 + \beta1(Xi2 - Xi1) + (ui2 - ui1)$
 
 $∆Yi = \delta0 + \beta1∆Xi + ∆ui$
 
@@ -237,6 +238,8 @@ tab year
 - crmrte = taxa de crime
 - unem = desemprego
 - observa-se que temos os mesmos números de observações para os anos 82 e 87, então temos um painel verdadeiro
+
+ccrmrte = \beta0 +\deltaD87t + \beta1cunem + eit$
 
 ```R
 # Mesma equação descrita na parte teórica
@@ -292,30 +295,29 @@ reg clscrap cgrant
 ![2](https://github.com/HenrySchall/Panel-Data/assets/96027335/3c9bf8bb-488d-4e3d-baf7-de8f3eaa756e)
 
 > Ao rodar um modelo via MQO Agrupado e Estimador de Primeiras Diferenças, em ambos os casos as dummies grant, 
-grant_1 e cgrant (grant - grant_1) são não significativas. Conclui-se que existe alguma coisa omitida no termo de erro que leva a uma estimação via MQO e Primeiras Diferenças viesada. Por exemplo, poderiamos dizer que existe diferenças entre as empresas na forma que os descartes são feitos, sendo assim considera-se a presença de um efeito fixo (FE), sendo necessário usar o Estimado de Efeito Fixo (FE);
+grant_1 e cgrant (grant - grant_1) são não significativas. Conclui-se que existe alguma coisa omitida no termo de erro que leva a uma estimação via MQO Agrupado e Primeiras Diferenças viesada. Por exemplo, poderiamos dizer que existe diferenças entre as empresas na forma que os descartes são feitos, sendo assim considera-se a presença de um efeito fixo (FE), sendo necessário usar o Estimado de Efeito Fixo (FE);
 
-### Estimador de Efeitos Fixo
+### Estimador de Efeito Fixo
+> Se de fato temos um efeito fixo é esperado que o valor médio da constante em i seja exatamente igual a constante, ou sjea, a média de ai no tempo é igual ao próprio ai. Então é possível fazer uma transformação  intra-grupo (within), ou seja, em vez de se tomar a diferença entre dois períodos, tira-se uma diferenças (subtrair) da média.
+
+$Yit = (\beta0 + \delta0) + \beta1Xit + Vit$ (ai + uit)$
+
+$Yit = (\beta0 + \delta0) + \beta1Xit + Vit$ (ai + \bar{uit})$
+
+$(Yit - \bar{Yi}) = \delta0 + \beta1(Xit - \bar{Xi}) + (uit - \bar{uit})$
+
+$\ddot{Yit} = \delta0 + \beta1\ddot{Xit} + \ddot{uit}$ -> Aplico MQO (Não será mais Viesado)
 
 ```R
-# identificando para o stata a presença de um painel, monstrando qual variável será o "i" e quando varipavel será o "t"
+# informando para o stata a presença de um painel
 iis fcode # variável i 
 tis year # variável t
 ```
 
 ```R
-# Estimando com o efeito fixo
 xtreg lscrap d88 d89 grant grant_1, fe
 ```
-
 ![3](https://github.com/HenrySchall/Panel-Data/assets/96027335/7bc851ba-ec29-471e-a8e3-0fa3050ab947)
-
-
-
-
-
-
-
-
 
 - Nosso modelo é significativo do ponto de vista global (Prob > F = 0.0001)
 - Controlado por outos fatores as taxas de descarte de 88 não são diferentes de em 89 estatiscamente falando
@@ -323,7 +325,8 @@ xtreg lscrap d88 d89 grant grant_1, fe
 - Subsídios, controlado por outros fatores, reduz a taxa de descarte
 - Controladas por outros fatores, os subsidios diminuem as taxas de descarte
 
-#### Método Alternativo -> LSDV (Least Squares Dummy Variable)
+### LSDV (Least Squares Dummy Variable)
+> O Estimador de Efeito Fixo pode ser descrito de outra forma, ele seria o mesmo que incluir uma dummy ou intercepto para cada i, é isso que o Estimador LSDV realiza, ele mostra explicitasmente o efeito dixo de cada i. A vantagem é que se torna possível conhecer o efeito fixo individual, todavia o excesso de dummies reduz o graus de liberade, então é adqueado quando vc apenas quer saber o efeito fixo individual de cada i
 
 ```R
 tabulate fcode, generate(dum)
@@ -332,6 +335,12 @@ tabulate fcode, generate(dum)
 ```R
 xtreg lscrap d88 d89 grant grant_1 dum*
 ```
+
+> São os Agrupadamento de Cortes Transversais, eles são paineis desbalacenados, apresentando algum atrito nos seus dados (falta de informação em algum período se as vari-aveis estiverem correlacionadas com o termo de eroo endossicratico teremos o problema de selecao amostral
+> ate t - os resultasosão identicos Fe tem vantagem em relacao a primeiras diferencas em painei nao falanciados
+> o estimador de primeiras dioferenca diminui o graus de liberdade, sendo assim, ha aumento da multicolinealidade
+
+
 
 ### Estimador de Efeitos Aleatório
 #### Exemplo
