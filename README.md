@@ -463,7 +463,7 @@ estimates table OLS FE RE, b se t stats(N r2 r2_o r2_b r2_w sigma_u sigma_e rho 
 
 
 
-
+de acordo com a literatura foram realizados os testes sugeridos pela obra base
 
 
 
@@ -530,6 +530,20 @@ estimates store FE
 # Etapa 2 -> Estimar com o Efeito Aleatório
 xtreg lwage exper expersq union married, re
 ```
+
+O segundo teste proposto é o Teste de Durbin-Watson, ele é utilizado para
+detectar a presença de autocorrelação nos resíduos. Autocorrelação ocorre quando os
+resíduos estão correlacionados entre si, o que pode invalidar a inferência estatística se não
+for detectada e tratada. A estatística de Durbin-Watson (D) é calculada considerando ei como
+o resíduo no tempo i e T o número de observações, sendo descrito pela seguinte fórmula:
+![Captura de tela 2024-07-05 155301](https://github.com/HenrySchall/Panel-Data/assets/96027335/29d5ae9f-eae4-4619-bc3e-315ac434aaa6)
+
+
+nterpretação:
+ D ≈ 2: Não há autocorrelação.
+ D < 1.5: Presença de autocorrelação positiva.
+ D > 2.5:Presença de autocorrelação negativa.
+
 
 ```R
 # Rodando Teste
