@@ -544,7 +544,7 @@ nterpretação:
  D < 1.5: Presença de autocorrelação positiva.
  D > 2.5:Presença de autocorrelação negativa.
 
-
+estat dwatson
 ```R
 # Rodando Teste
 hausman FE
