@@ -271,12 +271,6 @@ reg ccrmrte cunem
 - Interpretação _cons (intercepto) -> Condicionado pelas outras variavies explicativas iguais a 0, a variação da variável dependente é igual a 15.4 pontos perceutais, ou seja, mesmo com o desemprego não variando, ocorre um aumento nas ocorrências de crimininalidade de 82 para 87 em 15.4 ocorrências para cada grupo de 1000 habitantes.
 - Interpretação unem -> Quando o desemprego varia em um ponto percentual, a ocorrência de criminalidade aumenta (varia positivamente) em 2.2 ocorrências para cada grupo de 1000 habitantes.
 
-> *Apêndice:* 
-```
-# Demonstrando como calcular a primeira diferença de uma variável 
-generate ccrmrte2 = D.crmrte
-```
-
 #### 2º Segundo Exemplo 
 Carregar Base -> Jtrain.DTA (Acompanhamento de 54 empresas durante três anos, mostrando a taxa de descarte dos seus produtos, num cenário onde há subsídio governamental para treinamento de funcionários). 
 
@@ -330,9 +324,10 @@ $\ddot{Yit} = \delta0 + \beta1\ddot{Xit} + \ddot{uit}$ -> Aplico MQO Agrupado (N
 > Após essa transformação intra-grupo, teria-se um equação onde o estimador MQO Agrupado não seria mais viesado, permitindo a estimação do modelo. Mas qual a diferença entre os modelos?
 
 #### Comparação PD x FE
-- Controle de Variáveis Constantes ao Longo do Tempo: Ambos os métodos controlam para variáveis que são constantes ao longo do tempo, mas o estimador de efeitos fixos faz isso explicitamente, enquanto o método de primeiras diferenças faz isso implicitamente.
-- Dados Perdidos: O método de primeiras diferenças perde um período de dados devido à diferenciação, enquanto o estimador de efeitos fixos não.
-- Colinearidade: No método de efeitos fixos, variáveis que não variam ao longo do tempo não podem ser incluídas no modelo, enquanto no método de primeiras diferenças essas variáveis são eliminadas automaticamente.
+- Ambos os métodos controlam para variáveis que são constantes ao longo do tempo, mas o estimador de efeitos fixos faz isso explicitamente, enquanto o método de primeiras diferenças faz isso implicitamente.
+- O método de primeiras diferenças perde um período de dados devido à diferenciação, enquanto o estimador de efeitos fixos não.
+- No método de efeitos fixos, variáveis que não variam ao longo do tempo não podem ser incluídas no modelo, enquanto no método de primeiras diferenças essas variáveis são eliminadas automaticamente, o que diminui os graus de liberdade, aumentando a multicolinealidade.
+- Estudos mostram que em atpe t-2 período os resultados dos estimadores são idênticos, mas FE tem vantagem em relação a primeiras diferencas em paineis não balanceados.
 
 ```r
 xtset fcode year
@@ -350,7 +345,7 @@ xtreg lscrap d88 d89 grant grant_1, fe
 - Controladas por outros fatores, os subsidios diminuem as taxas de descarte
 
 ### LSDV (Least Squares Dummy Variable)
-> O Estimador de Efeito Fixo pode ser descrito de outra forma, ele seria o mesmo que incluir uma dummy ou intercepto para cada i, é isso que o Estimador LSDV realiza, ele mostra explicitasmente o efeito dixo de cada i. A vantagem é que se torna possível conhecer o efeito fixo individual, todavia o excesso de dummies reduz o graus de liberade, então é adqueado quando vc apenas quer saber o efeito fixo individual de cada i
+> O Estimador de Efeito Fixo pode ser descrito de outra forma, chamada de LSDV (Least Squares Dummy Variable), esse método consiste em incluir uma dummy ou intercepto para cada i, com isso mostra-se explicitasmente o efeito dixo de cada i. Essa metodológia possui a vantagem de possbilitar a análise do efeito fixo individual, todavia o excesso de dummies reduz os graus de liberade (diminuindo o número de observações), que podem levar a estimativas menos precisas já dividinde-se a variabilidade entre mais parâmetros. Sendo assim recomenda-se o uso desse modelo apenas quando procura-se saber o efeito fixo individual de cada i;
 
 ```R
 tabulate fcode, generate(dum)
@@ -360,16 +355,17 @@ tabulate fcode, generate(dum)
 xtreg lscrap d88 d89 grant grant_1 dum*
 ```
 
-> São os Agrupadamento de Cortes Transversais, eles são paineis desbalacenados, apresentando algum atrito nos seus dados (falta de informação em algum período se as vari-aveis estiverem correlacionadas com o termo de eroo endossicratico teremos o problema de selecao amostral
-> ate t - os resultasosão identicos Fe tem vantagem em relacao a primeiras diferencas em painei nao falanciados
-> o estimador de primeiras dioferenca diminui o graus de liberdade, sendo assim, ha aumento da multicolinealidade
+Observaçóes: 
+- Paineis desbalanceados são aqueles que apresentam algum tipo de atrito nos seus dados (falta de informação em algum período), nesse caso se as variáveis explicativas estiverem correlacionadas com o termo de erro endossicrático teremos o problema de seleção amostral (solução: Estimador de Heckman).
+- Demonstrando como calcular a primeira diferença de uma variável:
 
-
-
-
+``` r
+generate ccrmrte2 = D.crmrte
+```
 
 ### Estimador de Efeitos Aleatório
-#### Exemplo
+
+#### 1º Segundo Exemplo 
 Carregar Base -> WAGEPAN.DTA"
 
 Legenda de variáveis:
@@ -384,32 +380,34 @@ Legenda de variáveis:
 - theta -> lambda
 
 ```R
-# Sem Efeito Fixo (Ai) -> MQO
+# MQO
 reg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87, vce(cluster nr)
 # vce(cluster nr) -> controle de heterocedasticidade
 ```
-![imagem_1](https://github.com/HenrySchall/Stata/assets/96027335/cd19d5e9-7a60-4095-a23f-8a857d5e036c)
 
-```R
-# Efeito Fixo (FE)
+```r
 iis nr
 tis year
+```
+
+```r
+# Efeito Fixo (FE)
 xtreg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87,fe vce(cluster nr)
 ```
-![imagem3](https://github.com/HenrySchall/Stata/assets/96027335/abe459b8-70e0-46b5-858f-6a1345aee3a7)
+
 
 ```R
 # Efeito Aleatório (RE)
-xtreg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87, re vce(cluster nr) theta
+xtreg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87,re vce(cluster nr) theta
 ```
-![imagem2223](https://github.com/HenrySchall/Stata/assets/96027335/a2510f48-27db-4936-9465-e008b3ff97b8)
+
 
 ##### Gerar Tabela Comparativa 
 ```R
 # MQO
+# quietly é para não apresentar os resultados
 quietly regress lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87, vce(cluster nr) 
 estimates store OLS
-# quietly é para não apresentar os resultados
 ```
 
 ```R
@@ -428,6 +426,16 @@ estimates store RE
 # Gerar Tabela Conjunta
 estimates table OLS FE RE, b se t stats(N r2 r2_o r2_b r2_w sigma_u sigma_e rho theta)
 ```
+
+
+
+
+
+
+
+
+
+
 - *A questão é, qual o melhor modelo?*
 
 ##### Realizando os testes
