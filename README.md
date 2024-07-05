@@ -211,7 +211,7 @@ reg ldurat afchnge highearn afhigh male married indust injtype
 ![02](https://github.com/HenrySchall/Panel-Data/assets/96027335/6bd6cd21-9abb-4b20-a372-d7e11254c69a)
 
 ## Painel Verdadeiro 
-> Até então todos os datasets eram agrupamentos de cortes transversais, se uma das das variáveis controles tiver alguma relação com as variáveis explicativas de um modelo, haverá a presença de endogeneidade, porque a COV (Xn,e) ≠ 0. Então estimação via MQO Agrupado será viesada. Quando utiliza-se um painel verdadeiro, todos os "is" serão iguais para todos os períodos, sendo assim podemos utilizar outra equação geral, consideando um termo de erro composto. 
+> Até então todos os exemplos se tratavam de agrupamentos de cortes transversais e para esses tipos de datasets MQO Agrupado não é viesado, entretanto quando se tem um painel verdadeiro, todos os "is" serão iguais para todos os períodos, com isso se uma das das variáveis controles tiver alguma relação com as variáveis explicativas do modelo, haverá a presença de endogeneidade, ou seja, COV (Xn,e) ≠ 0. Desta forma a estimação via MQO Agrupado será viesada, sendo assim utiliza-se outra equação geral, consideando o chamado termo de erro composto. 
 
 #### Equação Geral 
 $Yit = \beta0 + + \beta1Xit + \beta2Xit + Vit$
@@ -222,9 +222,11 @@ $Vit = ai + uit$
 - ai = efeito fixo ou heteogeneidade não observada (aquilo que não varia no tempo)
 - uit = erro endossincrático (aquilo que varia no tempo)
 
-> Efeito fixo é algo que explica Yit, sendo específico de i, todavia não varia no horizonte de tempo observado. Então para evitar endogeneidade, utiliza-se de um específico, ao invés de MQO Agrupado, o Estimador de Primeiras Diferenças, que matemáticamente falando consiste em subtrair os cortes transversais das todas as observações i durante o tempo.
+> Efeito fixo é algo que explica Yit, sendo específico de i, todavia não varia no horizonte de tempo observado. Como o estimador MQO Agrupado é viesado, passa-se a utilizar outro estimador, o Estimador de Primeiras Diferenças (PD).
 
-### Estimador de Primeiras Diferenças
+### Estimador de Primeiras Diferenças(PD)
+> O Estimado de Primeiras Diferenças transforma a equação original subtraindo os valores da variável dependente e das variáveis explicativas, ou seja, todos os cortes transversais de todas as observações i durante o tempo, removendo qualquer efeito fixo que seja constante em t. Matemáticamente falando:
+
 $Yi1 = (\beta0 + \delta0) + \beta1Xi1 + Vit$ (ai + uit)$
 
 $Yi2 = (\beta0 + \delta0) + \beta1Xi1 + Vit$ (ai + uit)$
@@ -245,10 +247,9 @@ tab year
 - unem = desemprego
 - observa-se que temos os mesmos números de observações para os anos 82 e 87, então temos um painel verdadeiro
 
-$ccrmrte = \beta0 +\delta0D87 + \beta1cunem + eit$
+Equação do Modelo: $ccrmrte = \beta0 +\delta0D87 + \beta1cunem + eit$
 
 ```R
-# Mesma equação descrita na parte teórica
 reg crmrte d87 unem
 ```
 ![2](https://github.com/HenrySchall/Panel-Data/assets/96027335/dac9953a-e4c2-4d80-9e92-4e2a41d81c7a)
@@ -260,7 +261,7 @@ unem foi dada como não significativa (resultado contrário ao da literatura), e
 Então não posso estimar por MQO (viesado), vou usar estimador de primeiras diferenças.
 
 ```R
-# ccrmrte e cunem = são as primeiras diferenças das variáveis
+# ccrmrte e cunem #são as primeiras diferenças das variáveis
 reg ccrmrte cunem
 ```
 
@@ -291,28 +292,32 @@ reg lscrap d88 d89 grant grant_1
 ```
 ![1](https://github.com/HenrySchall/Panel-Data/assets/96027335/38738c66-939f-4c2c-8270-12f809667b92)
 
+> Ao rodar modelo via MQO Agrupado, as dummies grant e grant_1 são não significativas. Conclui-se que existe alguma coisa omitida no termo de erro que leva a uma estimação viesada via MQO Agrupado. Por exemplo, poderiamos dizer que existe diferenças entre as empresas, na forma como os descartes são feitos, isso leva a considerar a presença de um efeito fixo (FE) e obviamente a utilização do Estimador de Primeiras Diferenças.
 
+```r
+reg clscrap cgrant
+```
+![imag](https://github.com/HenrySchall/Panel-Data/assets/96027335/2cc76fac-b68d-4fd8-b7f0-e727f264a28f)
 
----------------------------------
+> Nesse caso como temos a variável fcode para indicar o número de cada firma, podemos rodar o estimador diretamente, sem precisar calcular as primeiras diferenças de cada variável, como feito no exemplo anterior
 
-
-
-
-
-
-> Ao rodar modelo via MQO Agrupado, as dummies grant e grant_1 são não significativas. Conclui-se que existe alguma coisa omitida no termo de erro que leva a uma estimação via MQO Agrupado viesada. Por exemplo, poderiamos dizer que existe diferenças entre as empresas na forma como os descartes são feitos, sendo assim considera-se a presença de um efeito fixo (FE), sendo necessário usar o Estimado de Efeito Fixo (FE);
+```r
+# informando para o stata a presença de um painel
+xtset fcode year
+```
+- fcode (variável i)
+- year (variável t)
 
 ```r
 # Primeiras Diferenças
-xtreg D.(lscrap grant grant_1)
+xtreg D.(lscrap grant)
 ```
+![imag2](https://github.com/HenrySchall/Panel-Data/assets/96027335/b190a1f5-8764-453b-950c-3bd3feddc394)
 
-> Nesse caso como temos a variável fcode para indicar o número da firma, podemos rodar o estimador diretamente, sem precisar calcular as primeiras diferenças de cada variável, como feito no exemplo anterior
-
-
+> Observa-se que o estimador de Primeiras Diferenças não retornou resultados estatísticamente significativos para as variáveis explicativas. Mas isso não significa que não temos a presença de Efeito Fixo, apenas que ele poder não ser o estimador adqueado, por isso outra alternativa para esse caso é o Estimador de Efeito Fixo (FE).
 
 ### Estimador de Efeito Fixo
-> Se de fato temos um efeito fixo é esperado que o valor médio da constante em i seja exatamente igual a constante, ou sjea, a média de ai no tempo é igual ao próprio ai. Então é possível fazer uma transformação  intra-grupo (within), ou seja, em vez de se tomar a diferença entre dois períodos, tira-se uma diferenças (subtrair) da média.
+> Como vimos Efeito fixo é algo que explica Yit, sendo específico de i, todavia não varia no horizonte de tempo observado, ou seja, ele controla todos os fatores que são constantes ao longo do tempo, mas que variam entre as unidades. Sendo assim, se de fato temos um efeito fixo é esperado que o valor médio da constante i seja exatamente igual a constante, ou seja, a média de ai no tempo é igual ao próprio ai. Essa suposição, permite realizar uma transformação intra-grupo (within), onde em vez de se tomar a diferença entre dois períodos, tira-se a diferença do período em realação a sua média. Matematicamente falando:
 
 $Yit = (\beta0 + \delta0) + \beta1Xit + Vit$ (ai + uit)$
 
@@ -320,12 +325,17 @@ $Yit = (\beta0 + \delta0) + \beta1Xit + Vit$ (ai + \bar{uit})$
 
 $(Yit - \bar{Yi}) = \delta0 + \beta1(Xit - \bar{Xi}) + (uit - \bar{uit})$
 
-$\ddot{Yit} = \delta0 + \beta1\ddot{Xit} + \ddot{uit}$ -> Aplico MQO (Não será mais Viesado)
+$\ddot{Yit} = \delta0 + \beta1\ddot{Xit} + \ddot{uit}$ -> Aplico MQO Agrupado (Não será mais viesado)
 
-```R
-# informando para o stata a presença de um painel
-iis fcode # variável i 
-tis year # variável t
+> Após essa transformação intra-grupo, teria-se um equação onde o estimador MQO Agrupado não seria mais viesado, permitindo a estimação do modelo. Mas qual a diferença entre os modelos?
+
+#### Comparação PD x FE
+- Controle de Variáveis Constantes ao Longo do Tempo: Ambos os métodos controlam para variáveis que são constantes ao longo do tempo, mas o estimador de efeitos fixos faz isso explicitamente, enquanto o método de primeiras diferenças faz isso implicitamente.
+- Dados Perdidos: O método de primeiras diferenças perde um período de dados devido à diferenciação, enquanto o estimador de efeitos fixos não.
+- Colinearidade: No método de efeitos fixos, variáveis que não variam ao longo do tempo não podem ser incluídas no modelo, enquanto no método de primeiras diferenças essas variáveis são eliminadas automaticamente.
+
+```r
+xtset fcode year
 ```
 
 ```R
