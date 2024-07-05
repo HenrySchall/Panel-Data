@@ -384,6 +384,7 @@ Legenda de variáveis:
 reg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87, vce(cluster nr)
 # vce(cluster nr) -> controle de heterocedasticidade
 ```
+![imagg1](https://github.com/HenrySchall/Panel-Data/assets/96027335/c2694844-9211-4fae-8741-3e02db132ba7)
 
 ```r
 iis nr
@@ -395,11 +396,13 @@ tis year
 xtreg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87,fe vce(cluster nr)
 ```
 
+![imagg2](https://github.com/HenrySchall/Panel-Data/assets/96027335/07ee40f2-59ae-4d23-9b44-850ab7ae844c)
 
 ```R
 # Efeito Aleatório (RE)
 xtreg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87,re vce(cluster nr) theta
 ```
+![imagg3](https://github.com/HenrySchall/Panel-Data/assets/96027335/8afe11f1-09c0-4fa9-a49c-79a1982770de)
 
 
 ##### Gerar Tabela Comparativa 
