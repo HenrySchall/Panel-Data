@@ -245,7 +245,7 @@ tab year
 - unem = desemprego
 - observa-se que temos os mesmos números de observações para os anos 82 e 87, então temos um painel verdadeiro
 
-ccrmrte = \beta0 +\deltaD87t + \beta1cunem + eit$
+$ccrmrte = \beta0 +\delta0D87 + \beta1cunem + eit$
 
 ```R
 # Mesma equação descrita na parte teórica
@@ -263,11 +263,18 @@ Então não posso estimar por MQO (viesado), vou usar estimador de primeiras dif
 # ccrmrte e cunem = são as primeiras diferenças das variáveis
 reg ccrmrte cunem
 ```
+
 ![3](https://github.com/HenrySchall/Panel-Data/assets/96027335/418e4c95-d013-46b5-8c32-6a21295c567c)
 
 - Vemos claramente que nosso modelo passou a ser significativo, assim como a variável unem.
 - Interpretação _cons (intercepto) -> Condicionado pelas outras variavies explicativas iguais a 0, a variação da variável dependente é igual a 15.4 pontos perceutais, ou seja, mesmo com o desemprego não variando, ocorre um aumento nas ocorrências de crimininalidade de 82 para 87 em 15.4 ocorrências para cada grupo de 1000 habitantes.
 - Interpretação unem -> Quando o desemprego varia em um ponto percentual, a ocorrência de criminalidade aumenta (varia positivamente) em 2.2 ocorrências para cada grupo de 1000 habitantes.
+
+> *Apêndice:* 
+```
+# Demonstrando como calcular a primeira diferença de uma variável 
+generate ccrmrte2 = D.crmrte
+```
 
 #### 2º Segundo Exemplo 
 Carregar Base -> Jtrain.DTA (Acompanhamento de 54 empresas durante três anos, mostrando a taxa de descarte dos seus produtos, num cenário onde há subsídio governamental para treinamento de funcionários). 
@@ -284,24 +291,21 @@ reg lscrap d88 d89 grant grant_1
 ```
 ![1](https://github.com/HenrySchall/Panel-Data/assets/96027335/38738c66-939f-4c2c-8270-12f809667b92)
 
-```r
-# Demonstrando como calcular a primeira diferença de uma variável 
-tsset fcode year
-```
 
-```r
-generate clscrap2 = D.lscrap
-# observe que clscrap2 retornou os mesmos valores de clscrap
-```
+
+
+
+
+> Ao rodar modelo via MQO Agrupado, as dummies grant e grant_1 são não significativas. Conclui-se que existe alguma coisa omitida no termo de erro que leva a uma estimação via MQO Agrupado viesada. Por exemplo, poderiamos dizer que existe diferenças entre as empresas na forma como os descartes são feitos, sendo assim considera-se a presença de um efeito fixo (FE), sendo necessário usar o Estimado de Efeito Fixo (FE);
 
 ```r
 # Primeiras Diferenças
-reg clscrap cgrant 
+xtreg D.(lscrap grant grant_1)
 ```
-![2](https://github.com/HenrySchall/Panel-Data/assets/96027335/3c9bf8bb-488d-4e3d-baf7-de8f3eaa756e)
 
-> Ao rodar um modelo via MQO Agrupado e Estimador de Primeiras Diferenças, em ambos os casos as dummies grant, 
-grant_1 e cgrant (grant - grant_1) são não significativas. Conclui-se que existe alguma coisa omitida no termo de erro que leva a uma estimação via MQO Agrupado e Primeiras Diferenças viesada. Por exemplo, poderiamos dizer que existe diferenças entre as empresas na forma que os descartes são feitos, sendo assim considera-se a presença de um efeito fixo (FE), sendo necessário usar o Estimado de Efeito Fixo (FE);
+> Nesse caso como temos a variável fcode para indicar o número da firma, podemos rodar o estimador diretamente, sem precisar calcular as primeiras diferenças de cada variável, como feito no exemplo anterior
+
+
 
 ### Estimador de Efeito Fixo
 > Se de fato temos um efeito fixo é esperado que o valor médio da constante em i seja exatamente igual a constante, ou sjea, a média de ai no tempo é igual ao próprio ai. Então é possível fazer uma transformação  intra-grupo (within), ou seja, em vez de se tomar a diferença entre dois períodos, tira-se uma diferenças (subtrair) da média.
