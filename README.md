@@ -177,8 +177,14 @@ reg rprice nearinc if year==1978
 - Observa-se que a resposta é  __*Não*__. Porque vemos o mesmo efeito em 78, muito antes da instalação do centro de tratamento de lixo. Sendo assim os preço são mais baixos porque muito possívelmente estamos analisando uma região menos privilegiada da cidade.
 - Então o efeito real da instalação do centro de tratamento de lixo, será a diferença entre as dummies y81 e y78 (18.824 - 30.688 = US$11.864), que seria o mesmo que estimar usando estimador DID
 
-```R
+```r
 # usando estimador DID
+reg rprice y81 nearinc y81nrinc
+```
+![124](https://github.com/HenrySchall/Panel-Data/assets/96027335/b81b605c-9308-4372-8a60-561523465a55)
+
+```r
+# adicionando mais variáveis explciativas (sugestão do autor)
 reg rprice y81 nearinc y81nrinc age agesq intst land area rooms baths
 ```
 ![6](https://github.com/HenrySchall/Panel-Data/assets/96027335/aa708ee2-8dcf-422f-a54c-d92f5fcb3f30)
