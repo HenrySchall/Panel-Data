@@ -181,7 +181,7 @@ reg rprice nearinc if year==1978
 # usando estimador DID
 reg rprice y81 nearinc y81nrinc
 ```
-![124](https://github.com/HenrySchall/Panel-Data/assets/96027335/b81b605c-9308-4372-8a60-561523465a55)
+![124](https://github.com/HenrySchall/Panel-Data/assets/96027335/1163ddd9-932e-412a-b33e-7ca105269504)
 
 ```r
 # adicionando mais variáveis explciativas (sugestão do autor)
@@ -345,6 +345,8 @@ xtreg lscrap d88 d89 grant grant_1 dum*
 > São os Agrupadamento de Cortes Transversais, eles são paineis desbalacenados, apresentando algum atrito nos seus dados (falta de informação em algum período se as vari-aveis estiverem correlacionadas com o termo de eroo endossicratico teremos o problema de selecao amostral
 > ate t - os resultasosão identicos Fe tem vantagem em relacao a primeiras diferencas em painei nao falanciados
 > o estimador de primeiras dioferenca diminui o graus de liberdade, sendo assim, ha aumento da multicolinealidade
+
+
 
 
 
