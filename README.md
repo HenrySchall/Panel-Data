@@ -363,8 +363,17 @@ Observaçóes:
 generate ccrmrte2 = D.crmrte
 ```
 
-### Estimador de Efeitos Aleatório
+### Estimador de Efeitos Aleatório (RE)
+> O Estimador de Efeitos Aleatório presume que as diferenças individuais são capturadas por um termo de erro específico de cada unidade, ou seja, há a presença do ai, ele é aleatório e não correlacionado com as variáveis explicativas, com isso o estimador MQO Agrupado não será viesado. Ele até pode não ser viesado (é consistente), mas ele não será eficiente, porque haverá autocorrelação serial no termo de erro composto, ou sejam o erro de um período será levado para o outro, já que o ai não é eliminado. A solução para esse problema é a realização de uma transformação de Mínimos Quadrados Generalizados (GLS), em outras palavras, uma transformação "quase na média", isso ocorre porque conhece-se a COR (Vit, Vit-1) e essa correlação está associada a variância do termo de erro endossincrático e à variância de ai. Sendo assim pode-se ponderar os Xs e o Y, pela estrutura de mudança da variância doas erros, dependendo de X, esse seria todo o processo de obtenção do estimador de Efeito Aleatório (RE). Matemáticamente falando:
 
+![Captura de tela 2024-07-05 151452](https://github.com/HenrySchall/Panel-Data/assets/96027335/337d84de-fcad-4391-8f8b-d52f76bccc52)
+
+- λ -> É a ponderação da estrutura de correlação serial, devido aos efeitos fixos presentes em MQO. Essa é a transformação "quase nada média", poderada por λ (estima-se o λ), em vez da transforma dentro do grupo, para cada Y e cada X de it em relação à média de i.
+
+#### Casos: 
+
+*λ = 1*
+  
 #### 1º Segundo Exemplo 
 Carregar Base -> WAGEPAN.DTA"
 
@@ -388,6 +397,9 @@ reg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d8
 
 ```r
 iis nr
+```
+
+```r
 tis year
 ```
 
@@ -409,19 +421,28 @@ xtreg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 
 ```R
 # MQO
 # quietly é para não apresentar os resultados
-quietly regress lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87, vce(cluster nr) 
+quietly regress lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87, vce(cluster nr)
+```
+
+```r 
 estimates store OLS
 ```
 
 ```R
 # Efeito Fixo (FE)
 quietly xtreg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87, fe vce(cluster nr)
+```
+
+```r
 estimates store FE
 ```
 
 ```R
 # Efeito Aleatório (RE)
 quietly xtreg lwage black hisp exper expersq union educ married d81 d82 d83 d84 d85 d86 d87, re vce(cluster nr)
+```
+
+```r
 estimates store RE
 ```
 
