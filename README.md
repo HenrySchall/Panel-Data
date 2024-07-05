@@ -480,33 +480,32 @@ Fazer nessa ordem ajuda na interpretação
 ```R
 xtreg lwage exper expersq union married, re vce(cluster nr) theta
 ```
-![1234454](https://github.com/HenrySchall/Stata/assets/96027335/2f6dff05-d704-4bb6-93dd-1bdaadd72acc)
 
 ```R
 xttest0
 ```
-![232344](https://github.com/HenrySchall/Stata/assets/96027335/4df14706-da14-49c8-89a7-ec318f806bfd)
+![di1](https://github.com/HenrySchall/Panel-Data/assets/96027335/03c94b56-7c55-4209-a21b-5cdc54e984a2)
 
-- prob > chibar2 = 0 -> hipótese nula rejeitada (inferior a nível de significância de 10%), a variância de ui é diferente de zero, melhor especificação não é MQO Agrupado.
-- **Então RE é preferida a MQO Agrupado**
 
-2) Teste F de Chow (Teste de igualdade de interceptos e inclinações do POLS).
+> prob > chibar2 = 0 -> rejeita H0, então a variância de ui é diferente de zero, melhor especificação não é MQO Agrupado. **Então RE é preferida a MQO Agrupado**
+
+2) Teste de Chow ou Teste F (Teste de igualdade de interceptos e inclinações do POLS).
 
 > Ele estima uma equação auxiliar, em que se analisa o efeito de um variável explicativa, influenciando a variável dependente, de modo diferente para cada indivíduo, ou seja, é como se eu cria-se uma dummy para cada indivíduo e multiplicasse pela variável explicativa selecionada e ao realizar um teste de hipótese em conjunto (teste de Chow), se os parâmetros forem em conjunto estatisticamente significativos, não há igualdade entre os interceptos, então há efeitos específicos para cada indivíduo.
 
 - Hipótese nula (H0): Há igualdade de interceptos e inclinações para todos os "is"
 - Hipótese alternativa (H1): Não há igualdade de interceptos e inclinações para todos os "is"
-- A rejeição da hipótese nula indica que os parâmetros são diferentes entre indivíduos, desta forma FE é preferível à MQO Agrupado.
+
+> A rejeição da hipótese nula indica que os parâmetros são diferentes entre indivíduos, desta forma FE é preferível à MQO Agrupado.
 
 ```R
-# não pode haver nada depois do fe, se não ele não entrega o teste
 xtreg lwage exper expersq union married, fe
 ```
-![4556](https://github.com/HenrySchall/Stata/assets/96027335/d3bd6aa6-3e40-4a6c-9666-b21a5413435d)
+![di2](https://github.com/HenrySchall/Panel-Data/assets/96027335/dde40069-11c5-4b84-81f3-df02f0d8766a)
 
-- Note que há dois testes um em cima e outro em baixo, o primeiro é a significância global do modelo e o segundo o teste de Chow.
-- p-valor > F = 0 -> rejeito H0 (menor que o nível de significância)
-- **Então FE é preferida a MQO Agrupado**
+> p-valor > F = 0 -> rejeito H0, então Não há igualdade de interceptos e inclinações para todos os "is". **Então FE é preferida a MQO Agrupado**
+
+- OBS: Note que há dois p-valor > F um em cima e outro em baixo, o primeiro é a significância global do modelo e o segundo o Teste de Chow.
 
 Primeiro teste sugeriu RE o segundo FE, nos dois casos a solução de agrupadamento foi descartada. Então qual devo escolher FE ou RE?
 
@@ -515,31 +514,28 @@ Primeiro teste sugeriu RE o segundo FE, nos dois casos a solução de agrupadame
 
 - Hipótese nula (H0): Diferença nos coeficientes não é sistemática -> EA é consistente (heterogeneidade aleatória)
 - Hipótese alternativa (H1): Diferença nos coeficientes é sistemática -> EA não é consistente (homogeneidade aleatória)
-- A rejeição da hipótese nula indica que FE é melhor que RE
+
+> A rejeição da hipótese nula indica que FE é melhor que RE
 
 ```R
 # Etapa 1 -> Estimar com o Efeito Fixo
 xtreg lwage exper expersq union married, fe 
 ```
-![imagem10](https://github.com/HenrySchall/Stata/assets/96027335/020fd7c6-33af-4dfe-b624-b30ba2edbea6)
 
 ```R
-# guardando resultados
-estimates store FE2
-# note que eu dei o nome de FE2, pois já havia usado FE anteriormente
+estimates store FE
 ```
+
 ```R
 # Etapa 2 -> Estimar com o Efeito Aleatório
 xtreg lwage exper expersq union married, re
 ```
-![Imagem20](https://github.com/HenrySchall/Stata/assets/96027335/66cd46b5-9ca9-4bb5-ab57-1b0b36471ad7)
 
 ```R
 # Rodando Teste
-hausman fixed 
+hausman FE
 ```
-![teste](https://github.com/HenrySchall/Stata/assets/96027335/47de4428-6051-485d-9efd-78e4540a2a29)
+![di3](https://github.com/HenrySchall/Panel-Data/assets/96027335/db9b16e3-a18a-427e-b540-94ef25d8773d)
 
-- P > chi2 = 0 -> menor que o nivel de significancia, ou seja, rejeita H0
-- A especificação correta é FE
+> P > chi2 = 0 -> menor que o nivel de significancia, ou seja, rejeita H0. **A especificação correta é FE**
 
