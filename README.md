@@ -371,9 +371,16 @@ generate ccrmrte2 = D.crmrte
 - λ -> É a ponderação da estrutura de correlação serial, devido aos efeitos fixos presentes em MQO. Essa é a transformação "quase nada média", poderada por λ (estima-se o λ), em vez da transforma dentro do grupo, para cada Y e cada X de it em relação à média de i.
 
 #### Casos: 
+- λ = 1 -> Quando $𝜎^2$ tem uma variância muito alta, sginifica que existe uma diferença muito grande entre os ai's (variância de ai será muito grande), então o efeito fixo é relevante. 
+- λ = 0 -> A variãncia de ai é muito pequeuna, então não há efieto fixo, que diferência as unidades de análise.
 
-*λ = 1*
-  
+Sendo assim, podemos concluir que:
+- Quanto mais próximo de λ = 0, MQO é o estimador preferível
+- Quanto mais próximo de λ = 1, FE é o estimador preferível
+- Quanto mais próximo de λ = 0,5 (da média), RE é o estimador preferível
+
+  O estimador de GLS, no contexto de efeitos aleatoris é uma stiuação intermediária.
+    
 #### 1º Segundo Exemplo 
 Carregar Base -> WAGEPAN.DTA"
 
