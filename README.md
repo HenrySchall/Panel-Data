@@ -366,7 +366,7 @@ generate ccrmrte2 = D.crmrte
 ### Estimador de Efeitos Aleatório (RE)
 > O Estimador de Efeitos Aleatório presume que as diferenças individuais são capturadas por um termo de erro específico de cada unidade, ou seja, há a presença do ai, ele é aleatório e não correlacionado com as variáveis explicativas, com isso o estimador MQO Agrupado não será viesado. Ele até pode não ser viesado (é consistente), mas ele não será eficiente, porque haverá autocorrelação serial no termo de erro composto, ou sejam o erro de um período será levado para o outro, já que o ai não é eliminado. A solução para esse problema é a realização de uma transformação de Mínimos Quadrados Generalizados (GLS), em outras palavras, uma transformação "quase na média", isso ocorre porque conhece-se a COR (Vit, Vit-1) e essa correlação está associada a variância do termo de erro endossincrático e à variância de ai. Sendo assim pode-se ponderar os Xs e o Y, pela estrutura de mudança da variância doas erros, dependendo de X, esse seria todo o processo de obtenção do estimador de Efeito Aleatório (RE). Matemáticamente falando:
 
-![Captura de tela 2024-07-05 151452](https://github.com/HenrySchall/Panel-Data/assets/96027335/337d84de-fcad-4391-8f8b-d52f76bccc52)
+![Captura de tela 2024-07-05 154904](https://github.com/HenrySchall/Panel-Data/assets/96027335/2b24bc4e-cdf2-47d5-865f-4f96593df8c5)
 
 - λ -> É a ponderação da estrutura de correlação serial, devido aos efeitos fixos presentes em MQO. Essa é a transformação "quase nada média", poderada por λ (estima-se o λ), em vez da transforma dentro do grupo, para cada Y e cada X de it em relação à média de i.
 
