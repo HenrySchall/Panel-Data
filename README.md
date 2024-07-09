@@ -458,20 +458,9 @@ estimates store RE
 estimates table OLS FE RE, b se t stats(N r2 r2_o r2_b r2_w sigma_u sigma_e rho theta)
 ```
 
+**A questão é, qual é o modelo adequado a ser usada, dado nossa base de dados? Na literatura, sugere-se o uso de testes estatísticos para determinar o melhor modelo, seguindo a ordem proposta abaixo:**
 
-
-
-
-
-de acordo com a literatura foram realizados os testes sugeridos pela obra base
-
-
-
-- *A questão é, qual o melhor modelo?*
-
-##### Realizando os testes
-Fazer nessa ordem ajuda na interpretação
-1) Breusch and Pagan Lagrangian multiplier test for random effects
+#### Teste Breusch and Pagan Lagrangian multiplier test for random effects
 
 - Hipótese nula (H0): var(ai) = 0
 - Hipótese alternativa (H1): var(ai) ≠ 0
@@ -486,10 +475,9 @@ xttest0
 ```
 ![di1](https://github.com/HenrySchall/Panel-Data/assets/96027335/03c94b56-7c55-4209-a21b-5cdc54e984a2)
 
+- prob > chibar2 = 0 -> rejeita H0, então a variância de ui é diferente de zero, melhor especificação não é MQO Agrupado. **Então RE é preferida a MQO Agrupado**
 
-> prob > chibar2 = 0 -> rejeita H0, então a variância de ui é diferente de zero, melhor especificação não é MQO Agrupado. **Então RE é preferida a MQO Agrupado**
-
-2) Teste de Chow ou Teste F (Teste de igualdade de interceptos e inclinações do POLS).
+#### Teste de Chow ou Teste F (Teste de igualdade de interceptos e inclinações do POLS).
 
 > Ele estima uma equação auxiliar, em que se analisa o efeito de um variável explicativa, influenciando a variável dependente, de modo diferente para cada indivíduo, ou seja, é como se eu cria-se uma dummy para cada indivíduo e multiplicasse pela variável explicativa selecionada e ao realizar um teste de hipótese em conjunto (teste de Chow), se os parâmetros forem em conjunto estatisticamente significativos, não há igualdade entre os interceptos, então há efeitos específicos para cada indivíduo.
 
@@ -503,13 +491,13 @@ xtreg lwage exper expersq union married, fe
 ```
 ![di2](https://github.com/HenrySchall/Panel-Data/assets/96027335/dde40069-11c5-4b84-81f3-df02f0d8766a)
 
-> p-valor > F = 0 -> rejeito H0, então Não há igualdade de interceptos e inclinações para todos os "is". **Então FE é preferida a MQO Agrupado**
-
+- p-valor > F = 0 -> rejeito H0, então Não há igualdade de interceptos e inclinações para todos os "is". **Então FE é preferida a MQO Agrupado**
 - OBS: Note que há dois p-valor > F um em cima e outro em baixo, o primeiro é a significância global do modelo e o segundo o Teste de Chow.
 
-Primeiro teste sugeriu RE o segundo FE, nos dois casos a solução de agrupadamento foi descartada. Então qual devo escolher FE ou RE?
+**Primeiro teste sugeriu RE o segundo FE, nos dois casos a solução de agrupadamento foi descartada. Então qual devo escolher FE ou RE?**
 
-3) Teste de Hausman
+#### Teste de Hausman
+
 > Ele é usado para comparar modelos, para verificar se há diferença sistemática nos parâmentros estimados entre os modelos, com o o bjetivo deselecionar o modelo mais parcimonioso.
 
 - Hipótese nula (H0): Diferença nos coeficientes não é sistemática -> EA é consistente (heterogeneidade aleatória)
@@ -530,22 +518,10 @@ estimates store FE
 # Etapa 2 -> Estimar com o Efeito Aleatório
 xtreg lwage exper expersq union married, re
 ```
-
-> O segundo teste proposto é o Teste de Durbin-Watson, ele é utilizado para detectar a presença de autocorrelação nos resíduos. Autocorrelação ocorre quando os resíduos estão correlacionados entre si, o que pode invalidar a inferência estatística se não for detectada e tratada. A estatística de Durbin-Watson (D) é calculada considerando ei como o resíduo no tempo i e T o número de observações, sendo descrito pela seguinte fórmula:
-
-![Captura de tela 2024-07-05 155301](https://github.com/HenrySchall/Panel-Data/assets/96027335/29d5ae9f-eae4-4619-bc3e-315ac434aaa6)
-
-nterpretação:
- D ≈ 2: Não há autocorrelação.
- D < 1.5: Presença de autocorrelação positiva.
- D > 2.5:Presença de autocorrelação negativa.
-
-estat dwatson
 ```R
 # Rodando Teste
 hausman FE
 ```
 ![di3](https://github.com/HenrySchall/Panel-Data/assets/96027335/db9b16e3-a18a-427e-b540-94ef25d8773d)
 
-> P > chi2 = 0 -> menor que o nivel de significancia, ou seja, rejeita H0. **A especificação correta é FE**
 
