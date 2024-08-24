@@ -224,7 +224,7 @@ $Vit = ai + uit$
 
 > Efeito fixo é algo que explica Yit, sendo específico de i, todavia não varia no horizonte de tempo observado. Como o estimador MQO Agrupado é viesado, passa-se a utilizar outro estimador, o Estimador de Primeiras Diferenças (PD).
 
-### Estimador de Primeiras Diferenças(PD)
+### Estimador de Primeiras Diferenças (PD)
 > O Estimado de Primeiras Diferenças transforma a equação original subtraindo os valores da variável dependente e das variáveis explicativas, ou seja, todos os cortes transversais de todas as observações i durante o tempo, removendo qualquer efeito fixo que seja constante em t. Matemáticamente falando:
 
 $Yi1 = (\beta0 + \delta0) + \beta1Xi1 + Vit$ (ai + uit)$
