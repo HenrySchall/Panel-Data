@@ -381,7 +381,7 @@ Sendo assim, podemos concluir que:
 
   O estimador de GLS, no contexto de efeitos aleatoris é uma stiuação intermediária.
     
-#### 1º Segundo Exemplo 
+#### Exemplo 
 Carregar Base -> WAGEPAN.DTA"
 
 Legenda de variáveis:
