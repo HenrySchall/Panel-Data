@@ -261,7 +261,7 @@ unem foi dada como não significativa (resultado contrário ao da literatura), e
 Então não posso estimar por MQO (viesado), vou usar estimador de primeiras diferenças.
 
 ```R
-# ccrmrte e cunem #são as primeiras diferenças das variáveis
+# ccrmrte e cunem são as primeiras diferenças das variáveis
 reg ccrmrte cunem
 ```
 
