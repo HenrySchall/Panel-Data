@@ -1,4 +1,4 @@
-# Estimação de Dados em Painel
+# Dados em Painel
 > A estimação de dados em painel é a analise de dados que possuem uma estrutura de dois fatores, ou seja temos um fator que representa diferentes unidades (como indivíduos, empresas, países, etc.) e outro que representa diferentes períodos de tempo. Esse documento procura demonstrar o processo de estimação de dados em painel, usando como base o livro: "*Econometric Analysis of Cross Section and Panel Data, Second Edition, de Jeffrey M. Wooldridge*". Todas as bases utilizadas nesse código podem ser encontradas nesse repositório, para quaisquer dúvidas consultar a obra referenciada.
 
 ### Características Gerais
